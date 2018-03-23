@@ -37,14 +37,10 @@ import org.apache.commons.lang.StringUtils
 import org.apache.commons.lang.reflect.MethodUtils
 import org.apache.ignite.Ignite
 import org.apache.ignite.Ignition
-import org.apache.ignite.cache.CacheAtomicityMode
 import org.apache.ignite.cache.CacheMode
-import org.apache.ignite.cache.CacheWriteSynchronizationMode
-import org.apache.ignite.cache.eviction.lru.LruEvictionPolicy
 import org.apache.ignite.configuration.CacheConfiguration
 import org.apache.ignite.configuration.FileSystemConfiguration
 import org.apache.ignite.configuration.IgniteConfiguration
-import org.apache.ignite.igfs.IgfsGroupDataBlocksKeyMapper
 import org.apache.ignite.igfs.IgfsMode
 import org.apache.ignite.logger.slf4j.Slf4jLogger
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
@@ -121,6 +117,8 @@ class IgGridFactory {
         System.setProperty('IGNITE_UPDATE_NOTIFIER','false')
         System.setProperty('IGNITE_NO_ASCII', 'true')
         System.setProperty('IGNITE_NO_SHUTDOWN_HOOK', 'true')
+//        System.setProperty('IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED', 'true')
+//        System.setProperty('IGNITE_QUIET', 'true')
 
         IgniteConfiguration cfg = new IgniteConfiguration()
         discoveryConfig(cfg)
@@ -129,7 +127,7 @@ class IgGridFactory {
 
         final groupName = clusterConfig.getAttribute( 'group', GRID_NAME ) as String
         log.debug "Apache Ignite config > group name: $groupName"
-        cfg.setGridName(groupName)
+        cfg.setIgniteInstanceName(groupName)
         cfg.setUserAttributes( (NODE_ROLE): role )
         cfg.setGridLogger( new Slf4jLogger() )
 
@@ -173,23 +171,6 @@ class IgGridFactory {
         ggfsCfg.with {
             name = 'igfs'
             defaultMode = IgfsMode.PRIMARY
-            metaCacheConfiguration = new CacheConfiguration(
-                    name: 'igfs-meta',
-                    cacheMode: CacheMode.REPLICATED,
-                    atomicityMode: CacheAtomicityMode.TRANSACTIONAL,   // note: transactional is mandatory
-                    writeSynchronizationMode: CacheWriteSynchronizationMode.PRIMARY_SYNC
-            )
-            dataCacheConfiguration = new CacheConfiguration(
-                    name: 'igfs-data',
-                    cacheMode: CacheMode.PARTITIONED,
-                    evictionPolicy: new LruEvictionPolicy(),
-                    atomicityMode: CacheAtomicityMode.TRANSACTIONAL,   // note: transactional is mandatory
-                    //queryIndexEnabled = false
-                    writeSynchronizationMode: clusterConfig.getAttribute('igfs.data.writeSynchronizationMode', CacheWriteSynchronizationMode.PRIMARY_SYNC) as CacheWriteSynchronizationMode,
-                    //distributionMode = GridCacheDistributionMode.PARTITIONED_ONLY
-                    affinityMapper: new IgfsGroupDataBlocksKeyMapper(512),
-                    backups: clusterConfig.getAttribute('igfs.data.backups', 0) as int
-            )
             blockSize = clusterConfig.getAttribute('igfs.blockSize', 128 * 1024) as int
             perNodeBatchSize = clusterConfig.getAttribute('igfs.perNodeBatchSize', 512) as int
             perNodeParallelBatchCount = clusterConfig.getAttribute('igfs.perNodeParallelBatchCount', 16) as int
