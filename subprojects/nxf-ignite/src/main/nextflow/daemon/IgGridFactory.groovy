@@ -117,8 +117,7 @@ class IgGridFactory {
         System.setProperty('IGNITE_UPDATE_NOTIFIER','false')
         System.setProperty('IGNITE_NO_ASCII', 'true')
         System.setProperty('IGNITE_NO_SHUTDOWN_HOOK', 'true')
-//        System.setProperty('IGNITE_PERFORMANCE_SUGGESTIONS_DISABLED', 'true')
-//        System.setProperty('IGNITE_QUIET', 'true')
+        System.setProperty('IGNITE_QUIET', 'false')
 
         IgniteConfiguration cfg = new IgniteConfiguration()
         discoveryConfig(cfg)
