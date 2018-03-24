@@ -1,6 +1,7 @@
 language: groovy
 jdk:
 - openjdk8
+- oraclejdk9
 before_install:
 - sudo apt-get -qq update
 - sudo apt-get -qq -y install graphviz
