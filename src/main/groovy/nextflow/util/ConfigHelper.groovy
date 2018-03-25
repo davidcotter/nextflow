@@ -224,8 +224,9 @@ class ConfigHelper {
     }
 
     static String toPropertiesString(ConfigObject config, boolean sort=false) {
-        def p = sort ? new OrderedProperties(config.toProperties()) : config.toProperties()
-        propertiesFormat(p)
+        def result = propertiesFormat(config.toProperties())
+        if( !result ) return result
+        sort ? result.readLines().sort().join('\n')+'\n' : result
     }
 
     static String toPropertiesString(Map map, boolean sort=false) {
@@ -240,7 +241,7 @@ class ConfigHelper {
         flattenFormat(map.toConfigObject(), sort)
     }
 
-    public static boolean isValidIdentifier(String s) {
+    static boolean isValidIdentifier(String s) {
         // an empty or null string cannot be a valid identifier
         if (s == null || s.length() == 0) {
             return false;
@@ -260,25 +261,7 @@ class ConfigHelper {
         return true;
     }
 
-    /**
-     * Extends the basic {@link Properties} to provide the ordered enumeration of keys
-     */
-    static class OrderedProperties extends Properties {
 
-        OrderedProperties() {}
-
-        OrderedProperties( Properties properties ) {
-            properties.each { key, value ->
-                this.put(key,value)
-            }
-        }
-
-        @Override
-        Enumeration<Object> keys() {
-            return new Vector<>(super.keySet().sort()).elements()
-        }
-
-    }
 
 }
 
