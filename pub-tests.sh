@@ -18,3 +18,6 @@ aws --region $AWS_DEFAULT_REGION s3 sync $x s3://www.nextflow.io/tests/$1/${x#./
  --acl public-read \
  --delete
 done
+
+# integration
+aws --region $AWS_DEFAULT_REGION s3 sync tests/checks s3://www.nextflow.io/tests/$1/integration
