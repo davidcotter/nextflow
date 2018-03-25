@@ -1,17 +1,24 @@
+sudo: required
 language: groovy
 jdk:
-- openjdk8
-- oraclejdk9
+  - openjdk8
+  - oraclejdk9
+services:
+  - docker
 before_install:
-- sudo apt-get -qq update
-- sudo apt-get -qq -y install graphviz
-- sudo pip install awscli
+  - sudo apt-get -qq update
+  - sudo apt-get -qq -y install graphviz
+  - sudo pip install awscli
 git:
-  submodules: false
+  submodules: true
 env:
   global:
   - GRADLE_OPTS='-Dorg.gradle.daemon=false'
+before_script:
+  - rm $HOME/.gitconfig
+  - mkdir -p "$HOME/.nextflow" && echo "providers.github.auth='$NXF_GITHUB_ACCESS_TOKEN'" > "$HOME/.nextflow/scm"
+  - make assemble  
 script:
-- make test
+  - make check install && ./integration-tests.sh
 after_script:
-- bash pub-tests.sh travis
+  - bash pub-tests.sh travis

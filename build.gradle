@@ -121,6 +121,7 @@ allprojects {
         }
     }
 
+    // Required to run tests on Java 9 and higher in compatibility mode
     if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
         tasks.withType(Test) {
             jvmArgs ([
@@ -134,8 +135,6 @@ allprojects {
             ])
         }
     }
-
-
 }
 
 configurations {
