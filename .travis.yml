@@ -9,6 +9,8 @@ before_install:
   - sudo apt-get -qq update
   - sudo apt-get -qq -y install graphviz
   - sudo pip install awscli
+install:
+  - sudo apt-get install -y realpath  
 git:
   submodules: true
 env:
