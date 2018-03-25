@@ -420,7 +420,7 @@ else
     cli=($("$JAVA_CMD" "${JAVA_OPTS[@]}" -jar "$NXF_BIN"))
     [[ $? -ne 0 ]] && echo_red 'Unable to initialize nextflow environment' && exit $?
 
-    if (( "$JAVA_VER" >= 9 )); then
+    if [[ "$JAVA_VER" =~ ^(9|10) ]]; then
       launcher=("${cli[@]:0:1}")
       launcher+=(--add-opens=java.base/java.lang=ALL-UNNAMED)
       launcher+=(--add-opens=java.base/java.io=ALL-UNNAMED)
